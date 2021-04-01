@@ -60,8 +60,6 @@ void OSC_CYCLE(const user_osc_param_t * const params, int32_t *yn, const uint32_
       oscillator.sub_phase2 -= (uint32_t)oscillator.sub_phase2;
 
       *(y++) = f32_to_q31(sig1 + subsig1 + subsig2);
-
-      //*(y++) = f32_to_q31(sig1 + subsig1);
   }
 }
 
