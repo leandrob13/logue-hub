@@ -50,7 +50,7 @@ It is composed of a main harmonic oscillator and two subharmonic oscillators. Th
 
  ## Parameters
  
-| Parameter      | Range        |                                                                        |
+| Parameter      | Range        | Description                                                            |
 | :------------: | :----------: | ---------------------------------------------------------------------: |
 | SHAPE          | 0 to 100     |level mix of main oscillator                                            |
 | ALT            | 0 to 100     |level mix of suboscillators                                             |

@@ -20,6 +20,7 @@ tools/emscripten/emsdk
 gcc_compiler/gcc-arm-none-eabi-5_4-2016q3
 cmake-build-debug/
 .idea
+logue-cli/logue-cli-osx-0.07-2b
 builds/nts-1/osc/*/*.ntkdigunit
 builds/nts-1/osc/*/*.mnlgxdunit
 # Doxygen documentation
