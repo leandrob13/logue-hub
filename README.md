@@ -9,6 +9,14 @@ In order to run user units built with SDK version 1.1-0, the following firmware 
 * minilogue xd: >= v2.00
 * Nu:Tekt NTS-1 digital: >= v1.02
 
+## Oscillators
+
+The compiled oscillators are found in the oscillators folder under its respective platform name:
+- nts-1.
+- minilogue-xd.
+
+At the moment, only nts-1 is available.
+
 ## Prerequisites
 
 In order to build the oscillators you need to install the `gcc-arm-none-eabi` compiler:
