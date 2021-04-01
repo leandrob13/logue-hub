@@ -16,3 +16,9 @@ typedef struct Oscillator {
   uint16_t undertone1;
   uint16_t undertone2;
 } Oscillator;
+
+typedef enum {
+    saw = 1,
+    square = 2,
+    sine = 3
+} OscillatorType;

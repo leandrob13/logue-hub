@@ -21,10 +21,12 @@ void OSC_INIT(uint32_t platform, uint32_t api) {
 
 float osc_type(float phase, uint16_t type) {
     switch(type) {
-        case 1:
+        case saw:
             return osc_sawf(phase);
-        case 2:
+        case square:
             return osc_sqrf(phase);
+        case sine:
+            return osc_sinf(phase);
     }
 }
 
