@@ -9,11 +9,13 @@ static Oscillator oscillator;
 
 void OSC_INIT(uint32_t platform, uint32_t api) {
   oscillator.phase = 0.f;
-  oscillator.sub_phase = 0.f;
+  oscillator.sub_phase1 = 0.f;
+  oscillator.sub_phase2 = 0.f;
   oscillator.gain = 0.5f;
   oscillator.sub_gain = 0.5f;
   oscillator.semitone = 0;
-  oscillator.undertone = 0;
+  oscillator.undertone1 = 0;
+  oscillator.undertone2 = 0;
   oscillator.type = 1;
 }
 
@@ -33,8 +35,9 @@ float inline signal(float p, float gain) {
 
 void OSC_CYCLE(const user_osc_param_t * const params, int32_t *yn, const uint32_t frames) {
   const float w1 = osc_w0f_for_note(((params->pitch)>>8) + oscillator.semitone, params->pitch & 0xFF);
-  const float sw1 = w1 / oscillator.undertone;
-  
+  const float sw1 = w1 / oscillator.undertone1;
+  const float sw2 = w1 / oscillator.undertone2;
+
   // LFO
   float lfo = q31_to_f32(params->shape_lfo);
 
@@ -44,15 +47,21 @@ void OSC_CYCLE(const user_osc_param_t * const params, int32_t *yn, const uint32_
 	
   for (; y != y_e; ) {
       // Main harmonic
-      const float sig1 = signal(oscillator.phase, oscillator.gain);
+      const float sig1 = signal(oscillator.phase, oscillator.gain + lfo);
       oscillator.phase += w1;
       oscillator.phase -= (uint32_t)oscillator.phase;
-      // Sub harmonic
-      const float subsig1  = signal(oscillator.sub_phase, oscillator.sub_gain);
-      oscillator.sub_phase += sw1;
-      oscillator.sub_phase -= (uint32_t)oscillator.sub_phase;
-		
-      *(y++) = f32_to_q31(sig1 + subsig1);
+      // Sub harmonic 1
+      const float subsig1  = signal(oscillator.sub_phase1, oscillator.sub_gain);
+      oscillator.sub_phase1 += sw1;
+      oscillator.sub_phase1 -= (uint32_t)oscillator.sub_phase1;
+      // Sub harmonic 2
+      const float subsig2  = signal(oscillator.sub_phase2, oscillator.sub_gain);
+      oscillator.sub_phase2 += sw2;
+      oscillator.sub_phase2 -= (uint32_t)oscillator.sub_phase2;
+
+      *(y++) = f32_to_q31(sig1 + subsig1 + subsig2);
+
+      //*(y++) = f32_to_q31(sig1 + subsig1);
   }
 }
 
@@ -68,12 +77,14 @@ void OSC_PARAM(uint16_t index, uint16_t value) {
       oscillator.semitone = value;
       break;
   case k_user_osc_param_id2:
-      oscillator.undertone = value;
+      oscillator.undertone1 = value;
       break;
   case k_user_osc_param_id3:
-      oscillator.type = value;
+      oscillator.undertone2 = value;
       break;
   case k_user_osc_param_id4:
+      oscillator.type = value;
+      break;
   case k_user_osc_param_id5:
   case k_user_osc_param_id6:
   case k_user_osc_param_shape:
