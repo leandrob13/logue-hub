@@ -57,4 +57,4 @@ It is composed of a main harmonic oscillator and two subharmonic oscillators. Th
 | semitone       | -12 to 12    |semitone tuning of main oscillator (-12 lower octave, 12 higher octave) |
 | undertone 1    | 1 to 7       |undertone value of first suboscillator                                  |
 | undertone 2    | 1 to 7       |undertone value of second suboscillator                                 |
-| oscT           | 1 to  3      |1: saw, 2: square, 3: sine                                              |
+| oscT           | 1 to  3      |The oscillator type 1: saw, 2: square, 3: sine                          |
