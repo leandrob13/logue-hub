@@ -34,7 +34,7 @@ Where platform is either `minilogue-xd` or `nts-1` (currently supporting on the 
 
 ## Oscillators:
 
-### SubH
+### SubHarmonikorg
 
 A three oscillator setup based on the [undertone series](https://en.wikipedia.org/wiki/Undertone_series) which allows the use of subharmonic tones. 
 It is composed of a main harmonic oscillator and two subharmonic oscillators. The available subharmonics are up to the 7th element in the undertone series.

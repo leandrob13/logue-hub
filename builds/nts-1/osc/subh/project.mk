@@ -2,7 +2,7 @@
 # Project Customization
 # #############################################################################
 
-PROJECT = subh
+PROJECT = subharmonikorg
 
 UCSRC =
 
