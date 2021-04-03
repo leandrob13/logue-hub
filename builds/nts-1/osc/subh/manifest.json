@@ -8,12 +8,14 @@
         "prg_id" : 0,
         "version" : "0.1-0",
         "name" : "subh",
-        "num_param" : 4,
+        "num_param" : 6,
         "params" : [
             ["semitone",       -12, 12, ""],
             ["undertone 1",    1, 7, "%"],
             ["undertone 2",    1, 7, "%"],
-            ["oscT",           1, 3, ""]
+            ["oscT",           1, 3, ""],
+            ["Arp",            0, 1, "%"],
+            ["ACLK",           0, 100, "%"]
           ]
     }
 }
