@@ -50,7 +50,7 @@ float inline signal(float p, float gain) {
     return osc_softclipf(0.25f, osc_type(p0, oscillator.type) * gain);
 }
 
-uint16_t get_arp_undertone(void) {
+uint16_t arp_undertone(void) {
     s_lfo.cycle();
     float wave = s_lfo.square_uni();
     if (sub_arp.arp_type == down) {
@@ -71,8 +71,15 @@ uint16_t get_arp_undertone(void) {
 
 void OSC_CYCLE(const user_osc_param_t * const params, int32_t *yn, const uint32_t frames) {
   const float w1 = osc_w0f_for_note(((params->pitch)>>8) + oscillator.semitone, params->pitch & 0xFF);
-  const float sw1 = w1 / ((sub_arp.arp_type == off) ? oscillator.undertone1 : get_arp_undertone());
-  const float sw2 = w1 / ((sub_arp.arp_type == off) ? oscillator.undertone2 : get_arp_undertone());
+  float sw1;
+  float sw2;
+
+  if (sub_arp.arp_type == off) {
+      sw1 = w1 / oscillator.undertone1;
+      sw2 = w1 / oscillator.undertone2;
+  }
+  else
+      sw1 = sw2 = w1 / arp_undertone();
 
   // LFO
   float lfo = q31_to_f32(params->shape_lfo);
@@ -124,6 +131,9 @@ void OSC_PARAM(uint16_t index, uint16_t value) {
       switch (value) {
           case 0:
               sub_arp.arp_type = off;
+              sub_arp.undertone = 1;
+              sub_arp.reset = 0;
+              s_lfo.reset();
               break;
           case 1:
               sub_arp.arp_type = down;
