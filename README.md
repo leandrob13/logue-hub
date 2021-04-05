@@ -47,6 +47,7 @@ It is composed of a main harmonic oscillator and two subharmonic oscillators. Th
 - Mix between the main oscillator and the suboscillators with the `shape` and `alt` knobs respectively.
 - Choose between square, saw and sine waveforms.
 - Modulate the main oscillator mix with the LFO.
+- Subharmonic oscillators arpeggiator with clock adjustment.
 
  ## Parameters
  
@@ -58,3 +59,5 @@ It is composed of a main harmonic oscillator and two subharmonic oscillators. Th
 | undertone 1    | 1 to 7       |undertone value of first suboscillator                                  |
 | undertone 2    | 1 to 7       |undertone value of second suboscillator                                 |
 | oscT           | 1 to  3      |The oscillator type 1: saw, 2: square, 3: sine                          |
+| Arp Type       | 0 to  1      |The arpeggiator type 0: off, 1: down                                    |
+| Arp Clock      | 0 to  100    |The arpeggiator clock in hertz.                                         |
