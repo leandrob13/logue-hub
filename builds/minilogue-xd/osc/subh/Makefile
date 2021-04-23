@@ -1,23 +1,15 @@
 # #############################################################################
-# Prologue Mod. FX Makefile
+# Prologue Oscillator Makefile
 # #############################################################################
 
-ifeq ($(OS),Windows_NT)
-ifeq ($(MSYSTEM), MSYS)
-    detected_OS := $(shell uname -s)
-else
-    detected_OS := Windows
-endif
-else
-    detected_OS := $(shell uname -s)
-endif
+detected_OS := $(shell uname -s)
 
-PLATFORMDIR = ../../..
-PROJECTDIR = ../..
-TOOLSDIR = $(PLATFORMDIR)/../../tools
-EXTDIR = $(PLATFORMDIR)/../ext
-
-CMSISDIR = $(EXTDIR)/CMSIS/CMSIS
+ROOTDIR = ../../../..
+MAKEDIR = $(ROOTDIR)/builds/minilogue-xd/osc/subh
+SRCDIR = $(ROOTDIR)/src
+MNLGDIR = $(SRCDIR)/minilogue-xd
+PROJECTDIR = $(MNLGDIR)/osc
+CMSISDIR = $(SRCDIR)/ext/CMSIS
 
 # #############################################################################
 # configure archive utility
@@ -25,14 +17,6 @@ CMSISDIR = $(EXTDIR)/CMSIS/CMSIS
 
 ZIP = /usr/bin/zip
 ZIP_ARGS = -r -m -q
-
-ifeq ($(OS),Windows_NT)
-ifneq ($(MSYSTEM), MSYS)
-ifneq ($(MSYSTEM), MINGW64)
-  ZIP = $(TOOLSDIR)/zip/bin/zip
-endif
-endif
-endif
 
 # #############################################################################
 # Include project specific definition
@@ -47,12 +31,11 @@ include ./project.mk
 MCU = cortex-m4
 
 GCC_TARGET = arm-none-eabi-
-GCC_BIN_PATH = $(TOOLSDIR)/gcc/gcc-arm-none-eabi-5_4-2016q3/bin
+GCC_BIN_PATH = $(ROOTDIR)/gcc_compiler/gcc-arm-none-eabi-5_4-2016q3/bin
 
 CC   = $(GCC_BIN_PATH)/$(GCC_TARGET)gcc
 CXXC = $(GCC_BIN_PATH)/$(GCC_TARGET)g++
 LD   = $(GCC_BIN_PATH)/$(GCC_TARGET)gcc
-#LD  = $(GCC_BIN_PATH)/$(GCC_TARGET)g++
 CP   = $(GCC_BIN_PATH)/$(GCC_TARGET)objcopy
 AS   = $(GCC_BIN_PATH)/$(GCC_TARGET)gcc -x assembler-with-cpp
 AR   = $(GCC_BIN_PATH)/$(GCC_TARGET)ar
@@ -67,8 +50,8 @@ RULESPATH = $(LDDIR)
 LDSCRIPT = $(LDDIR)/userosc.ld
 DLIBS = -lm
 
-DADEFS = -DSTM32F446xE -DCORTEX_USE_FPU=TRUE -DARM_MATH_CM4
-DDEFS = -DSTM32F446xE -DCORTEX_USE_FPU=TRUE -DARM_MATH_CM4 -D__FPU_PRESENT
+DADEFS = -DSTM32F401xC -DCORTEX_USE_FPU=TRUE -DARM_MATH_CM4
+DDEFS = -DSTM32F401xC -DCORTEX_USE_FPU=TRUE -DARM_MATH_CM4 -D__FPU_PRESENT
 
 COPT = -std=c11 -mstructure-size-boundary=8
 CXXOPT = -std=c++11 -fno-rtti -fno-exceptions -fno-non-call-exceptions
@@ -80,7 +63,7 @@ CXXWARN =
 
 FPU_OPTS = -mfloat-abi=hard -mfpu=fpv4-sp-d16 -fsingle-precision-constant -fcheck-new
 
-OPT = -g -Os -mlittle-endian 
+OPT = -g -Os -mlittle-endian
 OPT += $(FPU_OPTS)
 #OPT += -flto
 
@@ -92,10 +75,10 @@ TOPT = -mthumb -mno-thumb-interwork -DTHUMB_NO_INTERWORKING -DTHUMB_PRESENT
 # #############################################################################
 
 PKGDIR = $(PROJECT)
-PKGARCH = $(PROJECT).ntkdigunit
+PKGARCH = $(PROJECT).mnlgxdunit
 MANIFEST = manifest.json
 PAYLOAD = payload.bin
-BUILDDIR = $(PROJECTDIR)/build
+BUILDDIR = $(MAKEDIR)/build
 OBJDIR = $(BUILDDIR)/obj
 LSTDIR = $(BUILDDIR)/lst
 
@@ -119,11 +102,11 @@ CXXOBJS := $(addprefix $(OBJDIR)/, $(notdir $(CXXSRC:.cpp=.o)))
 
 OBJS := $(ASMXOBJS) $(ASMOBJS) $(COBJS) $(CXXOBJS)
 
-DINCDIR = $(PROJECTDIR)/inc \
-	  $(PROJECTDIR)/inc/api \
-          $(PLATFORMDIR)/inc \
-	  $(PLATFORMDIR)/inc/dsp \
-	  $(PLATFORMDIR)/inc/utils \
+DINCDIR = $(SRCDIR)/inc \
+	      $(SRCDIR)/inc/api \
+          $(SRCDIR)/inc \
+	  $(SRCDIR)/inc/dsp \
+	  $(SRCDIR)/inc/utils \
           $(CMSISDIR)/Include
 
 INCDIR := $(patsubst %,-I%,$(DINCDIR) $(UINCDIR))

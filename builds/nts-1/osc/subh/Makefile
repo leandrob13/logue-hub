@@ -36,7 +36,6 @@ GCC_BIN_PATH = $(ROOTDIR)/gcc_compiler/gcc-arm-none-eabi-5_4-2016q3/bin
 CC   = $(GCC_BIN_PATH)/$(GCC_TARGET)gcc
 CXXC = $(GCC_BIN_PATH)/$(GCC_TARGET)g++
 LD   = $(GCC_BIN_PATH)/$(GCC_TARGET)gcc
-#LD  = $(GCC_BIN_PATH)/$(GCC_TARGET)g++
 CP   = $(GCC_BIN_PATH)/$(GCC_TARGET)objcopy
 AS   = $(GCC_BIN_PATH)/$(GCC_TARGET)gcc -x assembler-with-cpp
 AR   = $(GCC_BIN_PATH)/$(GCC_TARGET)ar
@@ -103,11 +102,11 @@ CXXOBJS := $(addprefix $(OBJDIR)/, $(notdir $(CXXSRC:.cpp=.o)))
 
 OBJS := $(ASMXOBJS) $(ASMOBJS) $(COBJS) $(CXXOBJS)
 
-DINCDIR = $(NTSDIR)/inc \
-	      $(NTSDIR)/inc/api \
-          $(NTSDIR)/inc \
-	  $(NTSDIR)/inc/dsp \
-	  $(NTSDIR)/inc/utils \
+DINCDIR = $(SRCDIR)/inc \
+	      $(SRCDIR)/inc/api \
+          $(SRCDIR)/inc \
+	  $(SRCDIR)/inc/dsp \
+	  $(SRCDIR)/inc/utils \
           $(CMSISDIR)/Include
 
 INCDIR := $(patsubst %,-I%,$(DINCDIR) $(UINCDIR))

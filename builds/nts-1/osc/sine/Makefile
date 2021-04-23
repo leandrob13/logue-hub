@@ -8,7 +8,7 @@ ROOTDIR = ../../../..
 MAKEDIR = $(ROOTDIR)/builds/nts-1/osc/sine
 SRCDIR = $(ROOTDIR)/src
 NTSDIR = $(SRCDIR)/nts-1
-PROJECTDIR = $(NTSDIR)/osc
+PROJECTDIR = $(MNLGDIR)/osc
 CMSISDIR = $(SRCDIR)/ext/CMSIS
 
 # #############################################################################
@@ -103,11 +103,11 @@ CXXOBJS := $(addprefix $(OBJDIR)/, $(notdir $(CXXSRC:.cpp=.o)))
 
 OBJS := $(ASMXOBJS) $(ASMOBJS) $(COBJS) $(CXXOBJS)
 
-DINCDIR = $(NTSDIR)/inc \
-	      $(NTSDIR)/inc/api \
-          $(NTSDIR)/inc \
-	  $(NTSDIR)/inc/dsp \
-	  $(NTSDIR)/inc/utils \
+DINCDIR = $(MNLGDIR)/inc \
+	      $(MNLGDIR)/inc/api \
+          $(MNLGDIR)/inc \
+	  $(MNLGDIR)/inc/dsp \
+	  $(MNLGDIR)/inc/utils \
           $(CMSISDIR)/Include
 
 INCDIR := $(patsubst %,-I%,$(DINCDIR) $(UINCDIR))

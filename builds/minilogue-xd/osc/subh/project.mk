@@ -2,11 +2,11 @@
 # Project Customization
 # #############################################################################
 
-PROJECT = maxsize_test
+PROJECT = subharmonikorg
 
-UCSRC = 
+UCSRC =
 
-UCXXSRC = ../src/maxsize.cpp
+UCXXSRC = ../../../../src/minilogue-xd/osc/subh/subh.cpp
 
 UINCDIR =
 

@@ -1,0 +1,35 @@
+/**	
+	LeandroB
+*/
+
+#pragma once
+#include "userosc.h"
+
+typedef struct Oscillator {
+    float phase;
+    float sub_phase1;
+    float sub_phase2;
+    uint16_t type;
+    float gain;
+    float sub_gain;
+    int16_t semitone;
+    uint16_t undertone1;
+    uint16_t undertone2;
+} Oscillator;
+
+typedef enum {
+    saw = 0,
+    square = 1,
+    sine = 2
+} OscillatorType;
+
+typedef enum {
+  off = 0,
+  down = 1
+} ArpType;
+
+typedef struct SubArp {
+    uint16_t undertone;
+    ArpType arp_type;
+    uint16_t reset;
+} SubArp;

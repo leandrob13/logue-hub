@@ -22,7 +22,7 @@ cmake-build-debug/
 .idea
 logue-cli/logue-cli-osx-0.07-2b
 builds/nts-1/osc/*/*.ntkdigunit
-builds/nts-1/osc/*/*.mnlgxdunit
+builds/minilogue-xd/osc/*/*.mnlgxdunit
 # Doxygen documentation
 **/docs/html
 **/docs/latex

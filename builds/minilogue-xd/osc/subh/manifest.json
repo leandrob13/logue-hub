@@ -1,0 +1,21 @@
+{
+    "header" : 
+    {
+        "platform" : "minilogue-xd",
+        "module" : "osc",
+        "api" : "1.1-0",
+        "dev_id" : 0,
+        "prg_id" : 0,
+        "version" : "1.0-0",
+        "name" : "subh",
+        "num_param" : 6,
+        "params" : [
+            ["semitone",       0, 12, ""],
+            ["undertone 1",    0, 6, ""],
+            ["undertone 2",    0, 6, ""],
+            ["oscT",           0, 2, ""],
+            ["Arp",            0, 1, ""],
+            ["ACLK",           0, 100, ""]
+          ]
+    }
+}
