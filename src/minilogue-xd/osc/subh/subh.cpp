@@ -150,7 +150,7 @@ void OSC_NOTEOFF(const user_osc_param_t * const params){
 void OSC_PARAM(uint16_t index, uint16_t value) {
   switch (index) {
   case k_user_osc_param_id1:
-      oscillator.semitone = value + 1;
+      oscillator.semitone = value;
       break;
   case k_user_osc_param_id2:
       oscillator.undertone1 = value + 1;

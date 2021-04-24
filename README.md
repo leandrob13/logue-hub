@@ -15,8 +15,6 @@ The compiled oscillators are found in the oscillators folder under its respectiv
 - nts-1.
 - minilogue-xd.
 
-At the moment, only nts-1 is available.
-
 ## Prerequisites
 
 In order to build the oscillators you need to install the `gcc-arm-none-eabi` compiler:
@@ -30,14 +28,14 @@ To generate the oscillator files to upload to your hardware, you need to execute
 ```
 make -C builds/{platform}/osc/{oscillator dir}
 ```
-Where platform is either `minilogue-xd` or `nts-1` (currently supporting on the the latter). Oscillator dir corresponds to the oscillator folder you want to build.
+Where platform is either `minilogue-xd` or `nts-1`. Oscillator dir corresponds to the oscillator folder you want to build.
 
 ## Oscillators:
 
 ### SubHarmonikorg
 
 A three oscillator setup based on the [undertone series](https://en.wikipedia.org/wiki/Undertone_series) which allows the use of subharmonic tones. 
-It is composed of a main harmonic oscillator and two subharmonic oscillators. The available subharmonics are up to the 7th element in the undertone series.
+It is composed of a main oscillator and two subharmonic oscillators. The available subharmonics are up to the 7th element in the undertone series.
 
 #### Features
 
@@ -55,9 +53,9 @@ It is composed of a main harmonic oscillator and two subharmonic oscillators. Th
 | :------------: | :----------: | ---------------------------------------------------------------------: |
 | SHAPE          | 0 to 100     |level mix of main oscillator                                            |
 | ALT            | 0 to 100     |level mix of suboscillators                                             |
-| semitone       | -12 to 12    |semitone tuning of main oscillator (-12 lower octave, 12 higher octave) |
+| semitone       | 1 to 13      |semitone tuning of main oscillator (1 as root note, 13 higher octave)   |
 | undertone 1    | 1 to 7       |undertone value of first suboscillator                                  |
 | undertone 2    | 1 to 7       |undertone value of second suboscillator                                 |
 | oscT           | 1 to  3      |The oscillator type 1: saw, 2: square, 3: sine                          |
-| Arp Type       | 0 to  1      |The arpeggiator type 0: off, 1: down                                    |
-| Arp Clock      | 0 to  100    |The arpeggiator clock in hertz.                                         |
+| Arp Type       | 1 to  3      |The arpeggiator type 1: off, 2: down, 3: up-down                        |
+| Arp Clock      | 0 to  100    |The arpeggiator clock percentage of max frequency.                      |
