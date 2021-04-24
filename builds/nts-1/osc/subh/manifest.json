@@ -6,16 +6,16 @@
         "api" : "1.1-0",
         "dev_id" : 0,
         "prg_id" : 0,
-        "version" : "1.0-0",
+        "version" : "1.1-0",
         "name" : "subh",
         "num_param" : 6,
         "params" : [
-            ["semitone",       -12, 12, ""],
-            ["undertone 1",    1, 7, "%"],
-            ["undertone 2",    1, 7, "%"],
-            ["oscT",           1, 3, ""],
-            ["Arp",            0, 1, "%"],
-            ["ACLK",           0, 100, "%"]
+            ["Semitone",  -12, 12, ""],
+            ["Utone1",    1, 7, "%"],
+            ["Utone2",    1, 7, "%"],
+            ["OscT",      1, 3, ""],
+            ["Arp",       0, 2, "%"],
+            ["ACLK",      0, 100, "%"]
           ]
     }
 }

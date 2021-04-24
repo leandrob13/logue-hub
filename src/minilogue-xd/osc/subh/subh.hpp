@@ -25,11 +25,13 @@ typedef enum {
 
 typedef enum {
   off = 0,
-  down = 1
+  down = 1,
+  up_down = 2
 } ArpType;
 
 typedef struct SubArp {
     uint16_t undertone;
     ArpType arp_type;
     uint16_t reset;
+    bool up_slope;
 } SubArp;

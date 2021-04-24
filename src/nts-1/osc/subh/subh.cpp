@@ -10,6 +10,8 @@ static Oscillator oscillator;
 static SubArp sub_arp;
 static dsp::SimpleLFO s_lfo;
 
+static bool roll;
+
 void OSC_INIT(uint32_t platform, uint32_t api) {
   oscillator.phase = 0.f;
   oscillator.sub_phase1 = 0.f;
@@ -19,7 +21,7 @@ void OSC_INIT(uint32_t platform, uint32_t api) {
   oscillator.semitone = 0;
   oscillator.undertone1 = 0;
   oscillator.undertone2 = 0;
-  oscillator.type = 1;
+  oscillator.type = saw;
 
   sub_arp.arp_type = off;
   sub_arp.undertone = 1;
@@ -27,6 +29,7 @@ void OSC_INIT(uint32_t platform, uint32_t api) {
 
   s_lfo.reset();
   s_lfo.setF0(0.f, k_samplerate_recipf);
+  roll = false;
 }
 
 float osc_type(float phase, uint16_t type) {
@@ -53,19 +56,43 @@ float inline signal(float p, float gain) {
 uint16_t arp_undertone(void) {
     s_lfo.cycle();
     float wave = s_lfo.square_uni();
-    if (sub_arp.arp_type == down) {
-        if (wave == 0.f && sub_arp.reset == 0) {
-            if (sub_arp.undertone < 7)
-                sub_arp.undertone += 1;
-            else
-                sub_arp.undertone = 2;
-            sub_arp.reset = 1;
+    if (roll) {
+        switch (sub_arp.arp_type) {
+            case down: {
+                if (wave == 0.f && sub_arp.reset == 0) {
+                    if (sub_arp.undertone < 7)
+                        sub_arp.undertone += 1;
+                    else
+                        sub_arp.undertone = 2;
+                    sub_arp.reset = 1;
+                }
+                if (wave == 1.f)
+                    sub_arp.reset = 0;
+                break;
+            }
+            case up_down: {
+                if (wave == 0.f && sub_arp.reset == 0) {
+                    if (sub_arp.undertone < 7 && sub_arp.up_slope)
+                        sub_arp.undertone += 1;
+                    else if (sub_arp.undertone > 3) {
+                        sub_arp.undertone -= 1;
+                        sub_arp.up_slope = false;
+                    }
+                    else {
+                        sub_arp.undertone = 2;
+                        sub_arp.up_slope = true;
+                    }
+                    sub_arp.reset = 1;
+                }
+                if (wave == 1.f)
+                    sub_arp.reset = 0;
+                break;
+            }
+            case off:
+                sub_arp.undertone = 1;
+                break;
         }
-        if (wave == 1.f)
-            sub_arp.reset = 0;
     }
-    else
-        sub_arp.undertone = 1;
     return sub_arp.undertone;
 }
 
@@ -106,10 +133,18 @@ void OSC_CYCLE(const user_osc_param_t * const params, int32_t *yn, const uint32_
   }
 }
 
-void OSC_NOTEON(const user_osc_param_t * const params) {}
+void OSC_NOTEON(const user_osc_param_t * const params) {
+    s_lfo.reset();
+    sub_arp.undertone = 1;
+    sub_arp.reset = 0;
+    sub_arp.up_slope = true;
+    roll = true;
+}
 
 void OSC_NOTEOFF(const user_osc_param_t * const params){
-  (void)params;
+    roll = false;
+    sub_arp.reset = 0;
+    s_lfo.reset();
 }
 
 void OSC_PARAM(uint16_t index, uint16_t value) {
@@ -133,18 +168,23 @@ void OSC_PARAM(uint16_t index, uint16_t value) {
               sub_arp.arp_type = off;
               sub_arp.undertone = 1;
               sub_arp.reset = 0;
+              roll = false;
               s_lfo.reset();
               break;
           case 1:
               sub_arp.arp_type = down;
+              roll = true;
+              break;
+          case 2:
+              sub_arp.arp_type = up_down;
+              roll = true;
       }
       break;
   }
   case k_user_osc_param_id6:
   {
       float offset = (value == 0) ? 0.f : 30.f;
-      // Closest value to hertz in 0 - 100 scale from input.
-      s_lfo.setF0(offset + 1000.f * param_val_to_f32(value), k_samplerate_recipf);
+      s_lfo.setF0(offset + 4000.f * param_val_to_f32(value), k_samplerate_recipf);
       break;
   }
   case k_user_osc_param_shape:
