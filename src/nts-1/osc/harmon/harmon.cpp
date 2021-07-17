@@ -39,77 +39,70 @@
  */
 
 #include "userosc.h"
+#include "harmon.hpp"
 
-typedef struct State {
-  float w0;
-  float phase;
-  float drive;
-  float dist;
-  float lfo, lfoz;
-  uint8_t flags;
-} State;
-
-static State s_state;
-
-enum {
-  k_flags_none = 0,
-  k_flag_reset = 1<<0,
-};
+static Oscillator osc;
+static float harmonics[5];
 
 void OSC_INIT(uint32_t platform, uint32_t api)
 {
-  s_state.w0    = 0.f;
-  s_state.phase = 0.f;
-  s_state.drive = 1.f;
-  s_state.dist  = 0.f;
-  s_state.lfo = s_state.lfoz = 0.f;
-  s_state.flags = k_flags_none;
+  osc.drive = 0.f;
 }
 
-void OSC_CYCLE(const user_osc_param_t * const params,
-               int32_t *yn,
-               const uint32_t frames)
-{  
-  const uint8_t flags = s_state.flags;
-  s_state.flags = k_flags_none;
-  
-  const float w0 = s_state.w0 = osc_w0f_for_note((params->pitch)>>8, params->pitch & 0xFF);
-  float phase = (flags & k_flag_reset) ? 0.f : s_state.phase;
-  
-  const float drive = s_state.drive;
-  const float dist  = s_state.dist;
+static inline float fold(float x)
+{
+    float fold;
+    const float bias = (x < 0) ? -1.f : 1.f;
+    int phase = int((x + bias) / 2.f);
+    bool isEven = !(phase & 1);
+    if (isEven) {
+        fold = x - 2.f * phase;
+    } else {
+        fold = -x + 2.f * phase;
+    }
+    return fold;
+}
 
-  const float lfo = s_state.lfo = q31_to_f32(params->shape_lfo);
-  float lfoz = (flags & k_flag_reset) ? lfo : s_state.lfoz;
-  const float lfo_inc = (lfo - lfoz) / frames;
+void OSC_CYCLE(
+        const user_osc_param_t * const params,
+        int32_t *yn,
+        const uint32_t frames
+) {
+  float signals[5] = { 0 };
+  const float w0 = osc_w0f_for_note((params->pitch)>>8, params->pitch & 0xFF);
+  const float drive = osc.drive;
+  const float lfo = q31_to_f32(params->shape_lfo);
   
   q31_t * __restrict y = (q31_t *)yn;
   const q31_t * y_e = y + frames;
-  
+
   for (; y != y_e; ) {
-    const float dist_mod = dist + lfoz * dist;
-    
-    // Phase distortion
-    float p = phase + linintf(dist_mod, 0.f, dist_mod * osc_sinf(phase));
-    p = (p <= 0) ? 1.f - p : p - (uint32_t)p;
+    for (int i = 0; i < 5; i++) {
+        float p = osc.phases[i];
+        float g = osc.gains[i];
+        int div = i + 1;
+        float w = w0 * div;
+        p = (p < 0.f) ? 1.f - p : p - (uint32_t)p;
+        float folded = 0.75f * (drive + lfo) * fold(osc_sinf(p));
+        p = p + folded;
+        signals[i] = (osc_sinf(p)) * g;
+        osc.phases[i] += w;
+        osc.phases[i] -= (uint32_t)osc.phases[i];
+    }
 
     // Main signal
-    const float sig  = osc_softclipf(0.05f, drive * osc_sinf(p));
-    *(y++) = f32_to_q31(sig);
-    
-    phase += w0;
-    phase -= (uint32_t)phase;
+    float sig = 0.f;
+    for (int i = 0; i < 5 ; i++) {
+        sig += signals[i];
+    }
 
-    lfoz += lfo_inc;
+    *(y++) = f32_to_q31(sig);
   }
-  
-  s_state.phase = phase;
-  s_state.lfoz = lfoz;
 }
 
 void OSC_NOTEON(const user_osc_param_t * const params)
 {
-  s_state.flags |= k_flag_reset;
+    (void)params;
 }
 
 void OSC_NOTEOFF(const user_osc_param_t * const params)
@@ -123,17 +116,26 @@ void OSC_PARAM(uint16_t index, uint16_t value)
   
   switch (index) {
   case k_user_osc_param_id1:
+      osc.gains[0] = valf;
+      break;
   case k_user_osc_param_id2:
+      osc.gains[1] = valf;
+      break;
   case k_user_osc_param_id3:
+      osc.gains[2] = valf;
+      break;
   case k_user_osc_param_id4:
+      osc.gains[3] = valf;
+      break;
   case k_user_osc_param_id5:
+      osc.gains[4] = valf;
+      break;
   case k_user_osc_param_id6:
     break;
   case k_user_osc_param_shape:
-    s_state.dist = 0.3f * valf;
+    osc.drive = valf;
     break;
   case k_user_osc_param_shiftshape:
-    s_state.drive = 1.f + valf; 
     break;
   default:
     break;
