@@ -16,4 +16,5 @@ typedef struct Oscillator {
     float gains[5]= { 1.f, 0.f, 0.f, 0.f, 0.f };
     float drive;
     Spread spread;
+    float total_gain;
 } Oscillator;

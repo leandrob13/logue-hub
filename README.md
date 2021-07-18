@@ -72,12 +72,14 @@ For more harmonic addition, a wave folder can be controlled with the Shape knob.
 - A wave folder that folds each sine wave before summing the result to the final signal.
 - Spread control for the partials so that we have harmonic, odd or even partial overtones.
 - The wave folder can be modulated with the LFO.
+- Total gain control with distortion possibility when all the voices gains are at max.
 
  ## Parameters
  
 | Parameter      | Range        | Description                                                            |
 | :------------: | :----------: | ---------------------------------------------------------------------: |
 | SHAPE          | 0 to 100     |Wave folder control                                                     |
+| ALT            | 0 to 100     |Gain of the final signal                                                |
 | ROOT           | 0 to 100     |The fundamental frequency amplitude controller                          |
 | P1             | 0 to 100     |The first partial frequency amplitude controller                        |
 | P2             | 0 to 100     |The second partial frequency amplitude controller                       |

@@ -73,6 +73,7 @@ void OSC_CYCLE(
     for (int i = 0; i < 5 ; i++) {
         sig += signals[i];
     }
+    sig *= osc.total_gain;
 
     *(y++) = f32_to_q31(sig);
   }
@@ -122,6 +123,7 @@ void OSC_PARAM(uint16_t index, uint16_t value) {
     osc.drive = valf;
     break;
   case k_user_osc_param_shiftshape:
+    osc.total_gain = valf * 5.f;
     break;
   default:
     break;
