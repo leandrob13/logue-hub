@@ -59,3 +59,28 @@ It is composed of a main oscillator and two subharmonic oscillators. The availab
 | oscT           | 1 to  3      |The oscillator type 1: saw, 2: square, 3: sine                          |
 | Arp Type       | 1 to  3      |The arpeggiator type 1: off, 2: down, 3: up-down                        |
 | Arp Clock      | 0 to  100    |The arpeggiator clock percentage of max frequency.                      |
+
+### Harmonik
+
+The Harmonik is an additive oscillator comprised of 5 sine wave voices, each voice has an amplitude control and are summed to get the final tones.
+By default, each voice is spread apart by the harmonic series with the root note as the fundamental frequency. The Spread setting can change this so that we get even or odd partials in the mix. 
+For more harmonic addition, a wave folder can be controlled with the Shape knob.   
+
+#### Features
+
+- Five sine wave oscillators with amplitude control.
+- A wave folder that folds each sine wave before summing the result to the final signal.
+- Spread control for the partials so that we have harmonic, odd or even partial overtones.
+- The wave folder can be modulated with the LFO.
+
+ ## Parameters
+ 
+| Parameter      | Range        | Description                                                            |
+| :------------: | :----------: | ---------------------------------------------------------------------: |
+| SHAPE          | 0 to 100     |Wave folder control                                                     |
+| ROOT           | 0 to 100     |The fundamental frequency amplitude controller                          |
+| P1             | 0 to 100     |The first partial frequency amplitude controller                        |
+| P2             | 0 to 100     |The second partial frequency amplitude controller                       |
+| P3             | 0 to 100     |The third partial frequency amplitude controller                        |
+| P4             | 0 to 100     |The fourth partial frequency amplitude controller                       |
+| SPRD           | 0 to 2       |The spread controller 0: harmonic, 1: odd, 2: even                      |

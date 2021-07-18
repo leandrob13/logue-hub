@@ -1,56 +1,18 @@
-/*
-    BSD 3-Clause License
-
-    Copyright (c) 2018, KORG INC.
-    All rights reserved.
-
-    Redistribution and use in source and binary forms, with or without
-    modification, are permitted provided that the following conditions are met:
-
-    * Redistributions of source code must retain the above copyright notice, this
-      list of conditions and the following disclaimer.
-
-    * Redistributions in binary form must reproduce the above copyright notice,
-      this list of conditions and the following disclaimer in the documentation
-      and/or other materials provided with the distribution.
-
-    * Neither the name of the copyright holder nor the names of its
-      contributors may be used to endorse or promote products derived from
-      this software without specific prior written permission.
-
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-    FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-    DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-    SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-    CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-    OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-//*/
-
-/*
- * File: sine.cpp
- *
- * Naive sine oscillator test
- *
- */
+/**
+	LeandroB
+*/
 
 #include "userosc.h"
 #include "harmon.hpp"
 
 static Oscillator osc;
-static float harmonics[5];
 
-void OSC_INIT(uint32_t platform, uint32_t api)
-{
+void OSC_INIT(uint32_t platform, uint32_t api) {
   osc.drive = 0.f;
+  osc.spread = harmonic;
 }
 
-static inline float fold(float x)
-{
+static inline float fold(float x) {
     float fold;
     const float bias = (x < 0) ? -1.f : 1.f;
     int phase = int((x + bias) / 2.f);
@@ -61,6 +23,22 @@ static inline float fold(float x)
         fold = -x + 2.f * phase;
     }
     return fold;
+}
+
+static inline int spread(int index) {
+    int s;
+    switch (osc.spread) {
+        case harmonic:
+          s = index + 1;
+          break;
+        case odd:
+          s = 2 * (index + 1) - 1;
+          break;
+        case even:
+          s = (index == 0) ? 1 : 2 * index;
+          break;
+    }
+    return s;
 }
 
 void OSC_CYCLE(
@@ -80,7 +58,7 @@ void OSC_CYCLE(
     for (int i = 0; i < 5; i++) {
         float p = osc.phases[i];
         float g = osc.gains[i];
-        int div = i + 1;
+        int div = spread(i);
         float w = w0 * div;
         p = (p < 0.f) ? 1.f - p : p - (uint32_t)p;
         float folded = 0.75f * (drive + lfo) * fold(osc_sinf(p));
@@ -100,18 +78,15 @@ void OSC_CYCLE(
   }
 }
 
-void OSC_NOTEON(const user_osc_param_t * const params)
-{
+void OSC_NOTEON(const user_osc_param_t * const params) {
     (void)params;
 }
 
-void OSC_NOTEOFF(const user_osc_param_t * const params)
-{
+void OSC_NOTEOFF(const user_osc_param_t * const params) {
   (void)params;
 }
 
-void OSC_PARAM(uint16_t index, uint16_t value)
-{
+void OSC_PARAM(uint16_t index, uint16_t value) {
   const float valf = param_val_to_f32(value);
   
   switch (index) {
@@ -131,6 +106,17 @@ void OSC_PARAM(uint16_t index, uint16_t value)
       osc.gains[4] = valf;
       break;
   case k_user_osc_param_id6:
+      switch (value) {
+          case 0:
+              osc.spread = harmonic;
+              break;
+          case 1:
+              osc.spread = odd;
+              break;
+          case 2:
+              osc.spread = even;
+              break;
+      }
     break;
   case k_user_osc_param_shape:
     osc.drive = valf;

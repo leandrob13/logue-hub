@@ -2,7 +2,7 @@
 # Project Customization
 # #############################################################################
 
-PROJECT = harmonic_osc
+PROJECT = harmonik
 
 UCSRC =
 
