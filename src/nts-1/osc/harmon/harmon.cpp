@@ -10,6 +10,7 @@ static Oscillator osc;
 void OSC_INIT(uint32_t platform, uint32_t api) {
   osc.drive = 0.f;
   osc.spread = harmonic;
+  
 }
 
 static inline float fold(float x) {
@@ -67,7 +68,7 @@ void OSC_CYCLE(
         osc.phases[i] += w;
         osc.phases[i] -= (uint32_t)osc.phases[i];
     }
-
+    
     // Main signal
     float sig = 0.f;
     for (int i = 0; i < 5 ; i++) {
@@ -91,42 +92,42 @@ void OSC_PARAM(uint16_t index, uint16_t value) {
   const float valf = param_val_to_f32(value);
   
   switch (index) {
-  case k_user_osc_param_id1:
+    case k_user_osc_param_id1:
       osc.gains[0] = valf;
       break;
-  case k_user_osc_param_id2:
+    case k_user_osc_param_id2:
       osc.gains[1] = valf;
       break;
-  case k_user_osc_param_id3:
+    case k_user_osc_param_id3:
       osc.gains[2] = valf;
       break;
-  case k_user_osc_param_id4:
+    case k_user_osc_param_id4:
       osc.gains[3] = valf;
       break;
-  case k_user_osc_param_id5:
+    case k_user_osc_param_id5:
       osc.gains[4] = valf;
       break;
-  case k_user_osc_param_id6:
+    case k_user_osc_param_id6:
       switch (value) {
-          case 0:
-              osc.spread = harmonic;
-              break;
-          case 1:
-              osc.spread = odd;
-              break;
-          case 2:
-              osc.spread = even;
-              break;
+        case 0:
+          osc.spread = harmonic;
+          break;
+        case 1:
+          osc.spread = odd;
+          break;
+        case 2:
+          osc.spread = even;
+          break;
       }
-    break;
-  case k_user_osc_param_shape:
-    osc.drive = valf;
-    break;
-  case k_user_osc_param_shiftshape:
-    osc.total_gain = valf * 5.f;
-    break;
-  default:
-    break;
+      break;
+    case k_user_osc_param_shape:
+      osc.drive = valf;
+      break;
+    case k_user_osc_param_shiftshape:
+      osc.total_gain = valf * 5.f;
+      break;
+    default:
+      break;
   }
 }
 

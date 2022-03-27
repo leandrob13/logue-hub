@@ -58,3 +58,4 @@ builds/minilogue-xd/osc/*/*.mnlgxdunit
 *.dSYM/
 *.su
 
+/build/
