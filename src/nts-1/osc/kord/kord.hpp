@@ -42,14 +42,15 @@ typedef struct Scales {
     Scale scale = mayor;
     int note_index = 0;
     int * all_notes = get_all_notes();
-    int mayorNotes[7] = { 0, 2, 4, 5, 7, 9, 11 };
-    int minorNotes[7] = { 0, 2, 3, 5, 7, 8, 10 };
+    int mayor_notes[7] = { 0, 2, 4, 5, 7, 9, 11 };
+    int minor_notes[7] = { 0, 2, 3, 5, 7, 8, 10 };
 
     uint16_t get_scaled_note(uint16_t note) {
         int ranged_note = all_notes[note];
         int increment = 1;
+        int * selected_scale = get_scale_notes();
         for (int i = 0; i < 7; i++) {
-            if (mayorNotes[i] == ranged_note) {
+            if (selected_scale[i] == ranged_note) {
                 increment = 0;
                 break;
             } 
@@ -57,13 +58,28 @@ typedef struct Scales {
         int scaled_note = note + increment;
         int inc_note = ranged_note + increment;
         for (int i = 0; i < 7; i++) {
-            if (mayorNotes[i] == inc_note) {
+            if (selected_scale[i] == inc_note) {
                 note_index = i;
                 break;
             }
         }
 
         return scaled_note;
+    }
+
+    int * get_scale_notes() {
+        int * selected_scale;
+        switch (scale) {
+            case mayor:
+                selected_scale = mayor_notes;
+                break;
+            case minor:
+                selected_scale = minor_notes;
+                break;
+            default:
+                break;
+        }
+        return selected_scale;
     }
 
     int * get_all_notes() {
@@ -88,10 +104,7 @@ typedef enum {
 } ChordType;
 
 typedef struct Chords {
-    int chord[3] = {0};
-    int mayor[3] = { 0, 4, 7 };
-    int minor[3] = { 0, 3, 7 };
-    int minor_dim[3] = { 0, 3, 6 };
+    RootNote root_note = C;
 
     ChordType mayor_scale_chords[7] = { 
         MAYOR, 
@@ -103,28 +116,54 @@ typedef struct Chords {
         MINOR_DIM
     };
 
-    int * get_chord(uint16_t note, int index) {
-        ChordType chord_type = mayor_scale_chords[index];
+    ChordType minor_scale_chords[7] = { 
+        MINOR, 
+        MINOR_DIM, 
+        MAYOR, 
+        MINOR, 
+        MAYOR, 
+        MAYOR, 
+        MINOR_DIM
+    };
+
+    int * get_chord(uint16_t note, Scale scale, int index) {
+        ChordType * selected_scale_chords = get_scale_chords(scale); 
+        ChordType chord_type = selected_scale_chords[index];
+        static int chord[3] = {0};
+        int transposed_note = note + (int)root_note;
+        chord[0] = transposed_note;
         switch (chord_type) {
             case MAYOR:
-                chord[0] = note + 0;
-                chord[1] = note + 4;
-                chord[2] = note + 7;
+                chord[1] = transposed_note + 4;
+                chord[2] = transposed_note + 7;
                 break;
             case MINOR:
-                chord[0] = note + 0;
-                chord[1] = note + 3;
-                chord[2] = note + 7;
+                chord[1] = transposed_note + 3;
+                chord[2] = transposed_note + 7;
                 break;
             case MINOR_DIM:
-                chord[0] = note + 0;
-                chord[1] = note + 3;
-                chord[2] = note + 6;
+                chord[1] = transposed_note + 3;
+                chord[2] = transposed_note + 6;
                 break;    
             default:
                 break;
         }
         return chord;
+    }
+
+    ChordType * get_scale_chords(Scale scale) {
+        static ChordType * selected_chords;
+        switch (scale){
+            case mayor:
+                selected_chords = mayor_scale_chords;
+                break;
+            case minor:
+                selected_chords = mayor_scale_chords;
+                break;
+            default:
+                break;
+        }
+        return selected_chords;
     }
 } Chords;
 
@@ -141,5 +180,4 @@ typedef struct Oscillator {
     float phase2 = 0.f;
     float phase3 = 0.f;
     float drive;
-    uint16_t semitone;
 } Oscillator;

@@ -37,7 +37,6 @@
 static Oscillator osc;
 static Chords chords;
 static Scales scales;
-static int * all_notes = get_all_notes();
 
 void OSC_INIT(uint32_t platform, uint32_t api)
 {
@@ -46,15 +45,15 @@ void OSC_INIT(uint32_t platform, uint32_t api)
   osc.phase3 = 0.f;
 }
 
-void OSC_CYCLE(const user_osc_param_t * const params,
-               int32_t *yn,
-               const uint32_t frames)
-{  
+void OSC_CYCLE(
+  const user_osc_param_t * const params,
+  int32_t *yn,
+  const uint32_t frames
+) {  
 
   const uint16_t note = params->pitch>>8;
-  //scales.ranged_note = all_notes[note];
   int scaled_note = scales.get_scaled_note(note);
-  int * chord = chords.get_chord(scaled_note, scales.note_index);
+  int * chord = chords.get_chord(scaled_note, scales.scale, scales.note_index);
 
   const float w1 = osc_w0f_for_note(chord[0], params->pitch & 0xFF);
   const float w2 = osc_w0f_for_note(chord[1], params->pitch & 0xFF);
@@ -95,10 +94,11 @@ void OSC_PARAM(uint16_t index, uint16_t value) {
   
   switch (index) {
   case k_user_osc_param_id1:
-    osc.semitone = value;
+    chords.root_note = RootNote(value);
     break;
   case k_user_osc_param_id2:
-    
+    scales.scale = Scale(value);
+    break;
   case k_user_osc_param_id3:
   case k_user_osc_param_id4:
   case k_user_osc_param_id5:
