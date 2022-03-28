@@ -39,34 +39,46 @@ int * get_all_notes() {
 }
 
 typedef struct Scales {
-    int mayor[7] = { 0, 2, 4, 5, 7, 9, 11 };
-    int minor[7] = { 0, 2, 3, 5, 7, 8, 10 };
+    Scale scale = mayor;
+    int note_index = 0;
+    int * all_notes = get_all_notes();
+    int mayorNotes[7] = { 0, 2, 4, 5, 7, 9, 11 };
+    int minorNotes[7] = { 0, 2, 3, 5, 7, 8, 10 };
 
-    uint16_t get_inc(uint16_t note) {
-        bool found = false;
-        int inc = 1;
+    uint16_t get_scaled_note(uint16_t note) {
+        int ranged_note = all_notes[note];
+        int increment = 1;
         for (int i = 0; i < 7; i++) {
-            if (mayor[i] == note) {
-              found = true;
-              inc = 0;
-              break;
+            if (mayorNotes[i] == ranged_note) {
+                increment = 0;
+                break;
             } 
         }
-        uint16_t res = (found) ? note : note + 1;
-        
-        return inc;
-    }
-
-    int get_index(uint16_t note) {
-        int index = 0;
+        int scaled_note = note + increment;
+        int inc_note = ranged_note + increment;
         for (int i = 0; i < 7; i++) {
-            if (mayor[i] == note) {
-                index = i;
+            if (mayorNotes[i] == inc_note) {
+                note_index = i;
                 break;
             }
         }
-        return index;
+
+        return scaled_note;
     }
+
+    int * get_all_notes() {
+        static int notes[156];
+        for (int i = 1; i <= 13; i++) {
+            int max = 12 * i;
+            int min = max - 12;
+            for (int j = 0; j < 12; j++) {
+                int index = j + min;
+                notes[index] = j;
+            }
+        }
+        return notes;
+    }
+
 } Scales;
 
 typedef enum {
@@ -91,24 +103,23 @@ typedef struct Chords {
         MINOR_DIM
     };
 
-    int * get_chords(int index) {
+    int * get_chord(uint16_t note, int index) {
         ChordType chord_type = mayor_scale_chords[index];
-        
         switch (chord_type) {
             case MAYOR:
-                chord[0] = 0;
-                chord[1] = 4;
-                chord[2] = 7;
+                chord[0] = note + 0;
+                chord[1] = note + 4;
+                chord[2] = note + 7;
                 break;
             case MINOR:
-                chord[0] = 0;
-                chord[1] = 3;
-                chord[2] = 7;
+                chord[0] = note + 0;
+                chord[1] = note + 3;
+                chord[2] = note + 7;
                 break;
             case MINOR_DIM:
-                chord[0] = 0;
-                chord[1] = 3;
-                chord[2] = 6;
+                chord[0] = note + 0;
+                chord[1] = note + 3;
+                chord[2] = note + 6;
                 break;    
             default:
                 break;

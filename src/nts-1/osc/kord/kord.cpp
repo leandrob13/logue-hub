@@ -31,13 +31,6 @@
 
 //*/
 
-/*
- * File: sine.cpp
- *
- * Naive sine oscillator test
- *
- */
-
 #include "userosc.h"
 #include "kord.hpp"
 
@@ -59,14 +52,13 @@ void OSC_CYCLE(const user_osc_param_t * const params,
 {  
 
   const uint16_t note = params->pitch>>8;
-  int new_note = all_notes[note];
-  int inc = scales.get_inc(new_note);
-  int * chord = chords.get_chords(scales.get_index(new_note + inc));
-  int inc_note = note + inc;
-  
-  const float w1 = osc_w0f_for_note(inc_note + chord[0], params->pitch & 0xFF);
-  const float w2 = osc_w0f_for_note(inc_note + chord[1], params->pitch & 0xFF);
-  const float w3 = osc_w0f_for_note(inc_note + chord[2], params->pitch & 0xFF);
+  //scales.ranged_note = all_notes[note];
+  int scaled_note = scales.get_scaled_note(note);
+  int * chord = chords.get_chord(scaled_note, scales.note_index);
+
+  const float w1 = osc_w0f_for_note(chord[0], params->pitch & 0xFF);
+  const float w2 = osc_w0f_for_note(chord[1], params->pitch & 0xFF);
+  const float w3 = osc_w0f_for_note(chord[2], params->pitch & 0xFF);
   
   q31_t * __restrict y = (q31_t *)yn;
   const q31_t * y_e = y + frames;
