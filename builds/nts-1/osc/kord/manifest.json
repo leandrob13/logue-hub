@@ -1,0 +1,21 @@
+{
+  "header" :
+  {
+    "platform" : "nutekt-digital",
+    "module" : "osc",
+    "api" : "1.1-0",
+    "dev_id" : 0,
+    "prg_id" : 0,
+    "version" : "0.1-0",
+    "name" : "kord",
+    "num_param" : 6,
+    "params" : [
+      ["Semitone",  0, 12, ""],
+      ["CType",  0, 4, "%"],
+      ["P2",  0, 100, "%"],
+      ["P3",  0, 100, "%"],
+      ["P4",  0, 100, "%"],
+      ["SPRD",  0, 2, "%"]
+    ]
+  }
+}
