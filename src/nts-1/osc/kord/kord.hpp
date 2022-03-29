@@ -21,8 +21,8 @@ typedef enum {
 } RootNote;
 
 typedef enum {
-    mayor,
-    minor
+    Mayor = 0,
+    Minor = 1
 } Scale;
 
 int * get_all_notes() {
@@ -39,7 +39,7 @@ int * get_all_notes() {
 }
 
 typedef struct Scales {
-    Scale scale = mayor;
+    Scale scale = Mayor;
     int note_index = 0;
     int * all_notes = get_all_notes();
     int mayor_notes[7] = { 0, 2, 4, 5, 7, 9, 11 };
@@ -68,12 +68,12 @@ typedef struct Scales {
     }
 
     int * get_scale_notes() {
-        int * selected_scale;
+        static int * selected_scale;
         switch (scale) {
-            case mayor:
+            case Mayor:
                 selected_scale = mayor_notes;
                 break;
-            case minor:
+            case Minor:
                 selected_scale = minor_notes;
                 break;
             default:
@@ -104,6 +104,7 @@ typedef enum {
 } ChordType;
 
 typedef struct Chords {
+    Scale scale = Mayor;
     RootNote root_note = C;
 
     ChordType mayor_scale_chords[7] = { 
@@ -126,8 +127,8 @@ typedef struct Chords {
         MINOR_DIM
     };
 
-    int * get_chord(uint16_t note, Scale scale, int index) {
-        ChordType * selected_scale_chords = get_scale_chords(scale); 
+    int * get_chord(uint16_t note, int index) {
+        ChordType * selected_scale_chords = get_scale_chords(); 
         ChordType chord_type = selected_scale_chords[index];
         static int chord[3] = {0};
         int transposed_note = note + (int)root_note;
@@ -151,14 +152,14 @@ typedef struct Chords {
         return chord;
     }
 
-    ChordType * get_scale_chords(Scale scale) {
+    ChordType * get_scale_chords() {
         static ChordType * selected_chords;
         switch (scale){
-            case mayor:
+            case Mayor:
                 selected_chords = mayor_scale_chords;
                 break;
-            case minor:
-                selected_chords = mayor_scale_chords;
+            case Minor:
+                selected_chords = minor_scale_chords;
                 break;
             default:
                 break;
@@ -171,8 +172,8 @@ typedef enum {
     unison = 0,
     octave = 1,
     fifth = 2,
-    Mayor = 3,
-    Minor = 4
+    mayor_triad = 3,
+    minor_triad = 4
 } VoiceType;
 
 typedef struct Oscillator {

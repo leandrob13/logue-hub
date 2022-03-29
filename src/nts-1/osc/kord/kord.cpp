@@ -53,7 +53,7 @@ void OSC_CYCLE(
 
   const uint16_t note = params->pitch>>8;
   int scaled_note = scales.get_scaled_note(note);
-  int * chord = chords.get_chord(scaled_note, scales.scale, scales.note_index);
+  int * chord = chords.get_chord(scaled_note, scales.note_index);
 
   const float w1 = osc_w0f_for_note(chord[0], params->pitch & 0xFF);
   const float w2 = osc_w0f_for_note(chord[1], params->pitch & 0xFF);
@@ -93,23 +93,27 @@ void OSC_PARAM(uint16_t index, uint16_t value) {
   const float valf = param_val_to_f32(value);
   
   switch (index) {
-  case k_user_osc_param_id1:
-    chords.root_note = RootNote(value);
-    break;
-  case k_user_osc_param_id2:
-    scales.scale = Scale(value);
-    break;
-  case k_user_osc_param_id3:
-  case k_user_osc_param_id4:
-  case k_user_osc_param_id5:
-  case k_user_osc_param_id6:
-    break;
-  case k_user_osc_param_shape:
-    break;
-  case k_user_osc_param_shiftshape:
-    break;
-  default:
-    break;
+    case k_user_osc_param_id1:
+      chords.root_note = RootNote(value);
+      break;
+    case k_user_osc_param_id2: {
+      Scale scale = Scale(value);
+      scales.scale = scale;
+      chords.scale = scale;
+      break;
+    }
+      
+    case k_user_osc_param_id3:
+    case k_user_osc_param_id4:
+    case k_user_osc_param_id5:
+    case k_user_osc_param_id6:
+      break;
+    case k_user_osc_param_shape:
+      break;
+    case k_user_osc_param_shiftshape:
+      break;
+    default:
+      break;
   }
 }
 
