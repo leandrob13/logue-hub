@@ -35,8 +35,7 @@
 #include "kord.hpp"
 
 static Oscillator osc;
-static Chords chords;
-static Scales scales;
+static ScaleChords scale_chords;
 
 void OSC_INIT(uint32_t platform, uint32_t api)
 {
@@ -52,32 +51,25 @@ void OSC_CYCLE(
 ) {  
 
   const uint16_t note = params->pitch>>8;
-  int scaled_note = scales.get_scaled_note(note);
-  int * chord = chords.get_chord(scaled_note, scales.note_index);
+  int * chord = scale_chords.get_chord(note);
 
-  const float w1 = osc_w0f_for_note(chord[0], params->pitch & 0xFF);
-  const float w2 = osc_w0f_for_note(chord[1], params->pitch & 0xFF);
-  const float w3 = osc_w0f_for_note(chord[2], params->pitch & 0xFF);
+  float w[3];
+  for (int i = 0; i < 3; i ++) {
+    w[i] = osc_w0f_for_note(chord[i], params->pitch & 0xFF);
+  }
   
   q31_t * __restrict y = (q31_t *)yn;
   const q31_t * y_e = y + frames;
   float gain = 0.25f;
   
   for (; y != y_e; ) {
-    // Root
-      const float sig1 = osc_softclipf(0.25f,osc_sawf(osc.phase1) * gain);
-      osc.phase1 += w1;
-      osc.phase1 -= (uint32_t)osc.phase1;
-      // Third
-      const float sig2  = osc_softclipf(0.25f,osc_sawf(osc.phase2) * gain);
-      osc.phase2 += w2;
-      osc.phase2 -= (uint32_t)osc.phase2;
-      // Fifth
-      const float sig3  = osc_softclipf(0.25f,osc_sawf(osc.phase3) * gain) ;
-      osc.phase3 += w3;
-      osc.phase3 -= (uint32_t)osc.phase3;
-
-      *(y++) = f32_to_q31(sig1 + sig2 + sig3);
+    float sig = 0.f;
+    for (int i = 0; i < 3; i++) {
+      sig += osc_softclipf(0.25f,osc_sawf(osc.phases[i]) * gain);
+      osc.phases[i] += w[i];
+      osc.phases[i] -= (uint32_t)osc.phases[i];
+    }
+      *(y++) = f32_to_q31(sig);
   }
 }
 
@@ -94,18 +86,19 @@ void OSC_PARAM(uint16_t index, uint16_t value) {
   
   switch (index) {
     case k_user_osc_param_id1:
-      chords.root_note = RootNote(value);
+      scale_chords.root_note = RootNote(value);
       break;
     case k_user_osc_param_id2: {
-      Scale scale = Scale(value);
-      scales.scale = scale;
-      chords.scale = scale;
+      scale_chords.scale = Scale(value);
       break;
     }
       
     case k_user_osc_param_id3:
+      break;
     case k_user_osc_param_id4:
+      break;
     case k_user_osc_param_id5:
+      break;
     case k_user_osc_param_id6:
       break;
     case k_user_osc_param_shape:
