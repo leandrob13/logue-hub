@@ -67,8 +67,10 @@ typedef struct ScaleChords {
     int * get_chord(uint16_t note) {
         int scale_index = (int)scale;
         int note_index = note % 12;
-        static int chord[3] = { 0 };
-        int transposed_note = scale_notes[scale_index][note_index] + (int)root_note;
+        int adjustment = note_index - scale_notes[scale_index][note_index];
+        int scaled_note = note - adjustment;
+        static int chord[3];
+        int transposed_note = scaled_note + (int)root_note;
 
         for (int i = 0; i < 3; i++) {
             chord[i] = scale_chords[scale_index][note_index][i] + transposed_note;
@@ -88,8 +90,5 @@ typedef enum {
 
 typedef struct Oscillator {
     float phases[3] = { 0 };
-    float phase1 = 0.f;
-    float phase2 = 0.f;
-    float phase3 = 0.f;
     float drive;
 } Oscillator;

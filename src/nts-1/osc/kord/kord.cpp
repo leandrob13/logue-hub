@@ -39,9 +39,7 @@ static ScaleChords scale_chords;
 
 void OSC_INIT(uint32_t platform, uint32_t api)
 {
-  osc.phase1 = 0.f;
-  osc.phase2 = 0.f;
-  osc.phase3 = 0.f;
+  
 }
 
 void OSC_CYCLE(
@@ -52,7 +50,7 @@ void OSC_CYCLE(
 
   const uint16_t note = params->pitch>>8;
   int * chord = scale_chords.get_chord(note);
-
+  
   float w[3];
   for (int i = 0; i < 3; i ++) {
     w[i] = osc_w0f_for_note(chord[i], params->pitch & 0xFF);
@@ -92,7 +90,6 @@ void OSC_PARAM(uint16_t index, uint16_t value) {
       scale_chords.scale = Scale(value);
       break;
     }
-      
     case k_user_osc_param_id3:
       break;
     case k_user_osc_param_id4:
