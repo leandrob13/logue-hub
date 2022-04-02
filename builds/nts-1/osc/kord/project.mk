@@ -2,7 +2,7 @@
 # Project Customization
 # #############################################################################
 
-PROJECT = harmonik
+PROJECT = kord
 
 UCSRC =
 

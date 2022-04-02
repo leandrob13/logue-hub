@@ -49,16 +49,17 @@ void OSC_CYCLE(
 ) {  
 
   const uint16_t note = params->pitch>>8;
-  int * chord = scale_chords.get_chord(note);
+  int * chord = scale_chords.get_chord(note, osc.voice_type);
   
   float w[3];
+  float detune[3] = { 0, osc.detune, osc.detune * 1.5};
   for (int i = 0; i < 3; i ++) {
-    w[i] = osc_w0f_for_note(chord[i], params->pitch & 0xFF);
+    w[i] = osc_w0f_for_note(chord[i], params->pitch & 0xFF) + detune[i];
   }
   
   q31_t * __restrict y = (q31_t *)yn;
   const q31_t * y_e = y + frames;
-  float gain = 0.25f;
+  float gain = 0.5f;
   
   for (; y != y_e; ) {
     float sig = 0.f;
@@ -84,13 +85,13 @@ void OSC_PARAM(uint16_t index, uint16_t value) {
   
   switch (index) {
     case k_user_osc_param_id1:
+      osc.voice_type = VoiceType(value);
+      break;
+    case k_user_osc_param_id2:
       scale_chords.root_note = RootNote(value);
       break;
-    case k_user_osc_param_id2: {
-      scale_chords.scale = Scale(value);
-      break;
-    }
     case k_user_osc_param_id3:
+      scale_chords.scale = Scale(value);
       break;
     case k_user_osc_param_id4:
       break;
@@ -99,6 +100,7 @@ void OSC_PARAM(uint16_t index, uint16_t value) {
     case k_user_osc_param_id6:
       break;
     case k_user_osc_param_shape:
+      osc.detune = valf * 0.0001;
       break;
     case k_user_osc_param_shiftshape:
       break;

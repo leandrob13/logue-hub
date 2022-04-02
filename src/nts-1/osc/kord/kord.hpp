@@ -21,20 +21,43 @@ typedef enum {
 } RootNote;
 
 typedef enum {
-    Mayor = 0,
-    Minor = 1
+    Chromatic = 0,
+    Mayor = 1,
+    Minor = 2
 } Scale;
+
+typedef enum {
+    unison = 0,
+    octave = 1,
+    fifth = 2,
+    triad = 3
+} VoiceType;
 
 typedef struct ScaleChords {
     Scale scale = Mayor;
     RootNote root_note = C;
 
-    int scale_notes[2][12] = {
+    int scale_notes[3][12] = {
+        { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 }, // Chromatic
         { 0, 0, 2, 2, 4, 5, 5, 7, 7, 9, 9, 11 }, // Mayor
         { 0, 0, 2, 3, 3, 5, 5, 7, 8, 8, 10, 10 } // Minor
     };
 
-    int scale_chords[2][12][3] = {
+    int scale_chords[3][12][3] = {
+        {   // Chromatic
+            {0, 4, 7}, // MAYOR,
+            {0, 4, 7}, // MAYOR, 
+            {0, 4, 7}, // MAYOR, 
+            {0, 4, 7}, // MAYOR, 
+            {0, 4, 7}, // MAYOR, 
+            {0, 4, 7}, // MAYOR, 
+            {0, 4, 7}, // MAYOR, 
+            {0, 4, 7}, // MAYOR, 
+            {0, 4, 7}, // MAYOR, 
+            {0, 4, 7}, // MAYOR, 
+            {0, 4, 7}, // MAYOR, 
+            {0, 4, 7}, // MAYOR, 
+        },
         {   // Mayor
             {0, 4, 7}, // MAYOR,
             {0, 4, 7}, // MAYOR, 
@@ -64,31 +87,48 @@ typedef struct ScaleChords {
         }
     };
 
-    int * get_chord(uint16_t note) {
+    int * get_chord(uint16_t note, VoiceType voice_type) {
+        static int chord[3];
         int scale_index = (int)scale;
         int note_index = note % 12;
         int adjustment = note_index - scale_notes[scale_index][note_index];
         int scaled_note = note - adjustment;
-        static int chord[3];
         int transposed_note = scaled_note + (int)root_note;
-
-        for (int i = 0; i < 3; i++) {
-            chord[i] = scale_chords[scale_index][note_index][i] + transposed_note;
+        switch (voice_type) {
+            case unison:
+                for (int i = 0; i < 3; i++){
+                    chord[i] = transposed_note;
+                }
+                break;
+            case octave: {
+                int octaves[3] = {0, 12, 24};
+                for (int i = 0; i < 3; i++){
+                    chord[i] = transposed_note + octaves[i];
+                }
+                break;
+            }
+            case fifth:
+                for (int i = 0; i < 3; i++){
+                    chord[i] = (i == 2) ? transposed_note + 7 : transposed_note;
+                }
+                break;
+            case triad: {
+                for (int i = 0; i < 3; i++) {
+                    chord[i] = scale_chords[scale_index][note_index][i] + transposed_note;
+                }   
+            }
+            default:
+                break;
         }
+        
 
         return chord;
     }
 } Scales;
 
-typedef enum {
-    unison = 0,
-    octave = 1,
-    fifth = 2,
-    mayor_triad = 3,
-    minor_triad = 4
-} VoiceType;
-
 typedef struct Oscillator {
     float phases[3] = { 0 };
+    float detune = 0;
+    VoiceType voice_type = unison;
     float drive;
 } Oscillator;
