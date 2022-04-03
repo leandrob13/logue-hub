@@ -33,13 +33,21 @@
 
 #include "userosc.h"
 #include "kord.hpp"
+#include "simplelfo.hpp"
 
 static Oscillator osc;
+static Oscillator osc2;
+static Oscillator sub_osc;
 static ScaleChords scale_chords;
+static dsp::SimpleLFO s_lfo;
 
 void OSC_INIT(uint32_t platform, uint32_t api)
 {
-  
+  osc.wave_shape = saw;
+  osc2.wave_shape = sqr;
+  sub_osc.wave_shape = sqr;
+  s_lfo.reset();
+  s_lfo.setF0(30.f, k_samplerate_recipf);
 }
 
 void OSC_CYCLE(
@@ -47,28 +55,37 @@ void OSC_CYCLE(
   int32_t *yn,
   const uint32_t frames
 ) {  
-
+  s_lfo.cycle();
+  osc2.pwm = s_lfo.triangle_bi();
   const uint16_t note = params->pitch>>8;
   int * chord = scale_chords.get_chord(note, osc.voice_type);
   
   float w[3];
-  float detune[3] = { 0, osc.detune, osc.detune * 1.5};
+  float w2[3];
+  float detunes[3] = {0, osc.detune, osc.detune * 1.5};
   for (int i = 0; i < 3; i ++) {
-    w[i] = osc_w0f_for_note(chord[i], params->pitch & 0xFF) + detune[i];
+    w[i] = osc_w0f_for_note(chord[i], params->pitch & 0xFF) + detunes[i];
+    w2[i] = osc_w0f_for_note(chord[i], params->pitch & 0xFF);
   }
-  
+  float sw = (sub_osc.sub_octave == 0) ? 0.f : w[0] / sub_osc.sub_octave;
+
   q31_t * __restrict y = (q31_t *)yn;
   const q31_t * y_e = y + frames;
-  float gain = 0.5f;
   
   for (; y != y_e; ) {
     float sig = 0.f;
     for (int i = 0; i < 3; i++) {
-      sig += osc_softclipf(0.25f,osc_sawf(osc.phases[i]) * gain);
+      sig += osc.get_wave(osc.phases[i]) * 0.2 * osc.gain;
+      sig += osc2.get_wave(osc2.phases[i]) * 0.2 * osc2.gain;
       osc.phases[i] += w[i];
       osc.phases[i] -= (uint32_t)osc.phases[i];
+      osc2.phases[i] += w2[i];
+      osc2.phases[i] -= (uint32_t)osc2.phases[i];      
     }
-      *(y++) = f32_to_q31(sig);
+    sig += (sub_osc.sub_octave == 0) ? 0 : sub_osc.get_wave(sub_osc.phases[0]) * 0.2;
+    sub_osc.phases[0] += sw;
+    sub_osc.phases[0] -= (uint32_t)sub_osc.phases[0];
+    *(y++) = f32_to_q31(sig);
   }
 }
 
@@ -93,17 +110,27 @@ void OSC_PARAM(uint16_t index, uint16_t value) {
     case k_user_osc_param_id3:
       scale_chords.scale = Scale(value);
       break;
-    case k_user_osc_param_id4:
+    case k_user_osc_param_id4: {
+      sub_osc.sub_octave = value * 2;
       break;
+    }
     case k_user_osc_param_id5:
+      osc2.pw = (float)value / 100.f;
       break;
     case k_user_osc_param_id6:
+      s_lfo.setF0(value, k_samplerate_recipf);
       break;
-    case k_user_osc_param_shape:
+    case k_user_osc_param_shape: {
       osc.detune = valf * 0.0001;
+      osc2.mod_amount = valf * 0.5;
       break;
-    case k_user_osc_param_shiftshape:
+    }
+    case k_user_osc_param_shiftshape: {
+      float val = param_val_to_f32(value) * 2.f;
+      osc.gain = 2.f - val;
+      osc2.gain = val;
       break;
+    }
     default:
       break;
   }

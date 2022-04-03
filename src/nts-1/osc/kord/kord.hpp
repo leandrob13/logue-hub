@@ -120,15 +120,41 @@ typedef struct ScaleChords {
             default:
                 break;
         }
-        
-
         return chord;
     }
 } Scales;
 
+typedef enum {
+    saw = 0,
+    sqr = 1
+} WaveShape;
+
 typedef struct Oscillator {
-    float phases[3] = { 0 };
-    float detune = 0;
+    WaveShape wave_shape;
     VoiceType voice_type = unison;
-    float drive;
+    float phases[3] = { 0 };
+    float detune = 0.f;
+    float pw = 0.5;
+    float pwm = 0;
+    float mod_amount = 0;
+    float gain = 0;
+    int sub_octave = 0; 
+
+    float get_wave(float phase) {
+        float wave;
+        float p = (phase <= 0) ? 1.f - phase : phase - (uint32_t)phase;
+        switch (wave_shape) {
+            case saw:
+                wave = osc_sawf(p);
+                break;
+            case sqr: {
+                float pw_value = pw + (pwm * mod_amount);
+                wave = (p <= pw_value) ? 0.8f : -0.8f;
+                break;
+            }
+            default:
+                break;
+        }
+        return wave;
+    }
 } Oscillator;
