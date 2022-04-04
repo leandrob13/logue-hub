@@ -126,35 +126,55 @@ typedef struct ScaleChords {
 
 typedef enum {
     saw = 0,
-    sqr = 1
+    sqr = 1,
+    sine = 2
 } WaveShape;
 
 typedef struct Oscillator {
     WaveShape wave_shape;
     VoiceType voice_type = unison;
     float phases[3] = { 0 };
-    float detune = 0.f;
+    float detunes[3] = { 0.f };
     float pw = 0.5;
-    float pwm = 0;
+    float shape = 0.f;
+    float mod = 0;
     float mod_amount = 0;
-    float gain = 0;
     int sub_octave = 0; 
 
     float get_wave(float phase) {
         float wave;
-        float p = (phase <= 0) ? 1.f - phase : phase - (uint32_t)phase;
+        float p = (phase < 0.f) ? 1.f - phase : phase - (uint32_t)phase;
         switch (wave_shape) {
             case saw:
                 wave = osc_sawf(p);
                 break;
             case sqr: {
-                float pw_value = pw + (pwm * mod_amount);
+                float pw_value = pw + (mod * mod_amount);
                 wave = (p <= pw_value) ? 0.8f : -0.8f;
+                break;
+            }
+            case sine: {
+                float folded = 0.75 * (shape + (mod * mod_amount)) * fold(osc_sinf(p));
+                p = p + folded;
+                wave = osc_sinf(p);
                 break;
             }
             default:
                 break;
         }
         return wave;
+    }
+
+    inline float fold(float x) {
+        float fold;
+        const float bias = (x < 0) ? -1.f : 1.f;
+        int phase = int((x + bias) / 2.f);
+        bool isEven = !(phase & 1);
+        if (isEven) {
+            fold = x - 2.f * phase;
+        } else {
+            fold = -x + 2.f * phase;
+        }
+        return fold;
     }
 } Oscillator;

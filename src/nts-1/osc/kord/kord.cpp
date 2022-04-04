@@ -36,7 +36,6 @@
 #include "simplelfo.hpp"
 
 static Oscillator osc;
-static Oscillator osc2;
 static Oscillator sub_osc;
 static ScaleChords scale_chords;
 static dsp::SimpleLFO s_lfo;
@@ -44,7 +43,6 @@ static dsp::SimpleLFO s_lfo;
 void OSC_INIT(uint32_t platform, uint32_t api)
 {
   osc.wave_shape = saw;
-  osc2.wave_shape = sqr;
   sub_osc.wave_shape = sqr;
   s_lfo.reset();
   s_lfo.setF0(30.f, k_samplerate_recipf);
@@ -56,16 +54,13 @@ void OSC_CYCLE(
   const uint32_t frames
 ) {  
   s_lfo.cycle();
-  osc2.pwm = s_lfo.triangle_bi();
+  osc.mod = s_lfo.triangle_bi();
   const uint16_t note = params->pitch>>8;
   int * chord = scale_chords.get_chord(note, osc.voice_type);
   
   float w[3];
-  float w2[3];
-  float detunes[3] = {0, osc.detune, osc.detune * 1.5};
   for (int i = 0; i < 3; i ++) {
-    w[i] = osc_w0f_for_note(chord[i], params->pitch & 0xFF) + detunes[i];
-    w2[i] = osc_w0f_for_note(chord[i], params->pitch & 0xFF);
+    w[i] = osc_w0f_for_note(chord[i], params->pitch & 0xFF) + osc.detunes[i];
   }
   float sw = (sub_osc.sub_octave == 0) ? 0.f : w[0] / sub_osc.sub_octave;
 
@@ -75,12 +70,10 @@ void OSC_CYCLE(
   for (; y != y_e; ) {
     float sig = 0.f;
     for (int i = 0; i < 3; i++) {
-      sig += osc.get_wave(osc.phases[i]) * 0.2 * osc.gain;
-      sig += osc2.get_wave(osc2.phases[i]) * 0.2 * osc2.gain;
+      if (osc.detunes[i] == 0 && osc.voice_type == unison) osc.phases[i] = osc.phases[0];
+      sig += osc.get_wave(osc.phases[i]) * 0.2;
       osc.phases[i] += w[i];
-      osc.phases[i] -= (uint32_t)osc.phases[i];
-      osc2.phases[i] += w2[i];
-      osc2.phases[i] -= (uint32_t)osc2.phases[i];      
+      osc.phases[i] -= (uint32_t)osc.phases[i];      
     }
     sig += (sub_osc.sub_octave == 0) ? 0 : sub_osc.get_wave(sub_osc.phases[0]) * 0.2;
     sub_osc.phases[0] += sw;
@@ -114,21 +107,27 @@ void OSC_PARAM(uint16_t index, uint16_t value) {
       sub_osc.sub_octave = value * 2;
       break;
     }
-    case k_user_osc_param_id5:
-      osc2.pw = (float)value / 100.f;
+    case k_user_osc_param_id5: {
+      float ratio = (float)value / 100.f;
+      osc.shape = param_val_to_f32( (int)(1408 * ratio) );
+      if (ratio < 0.1) ratio = 0.1;
+      if (ratio > 0.9) ratio = 0.9;
+      osc.pw = ratio;
       break;
+    }
     case k_user_osc_param_id6:
       s_lfo.setF0(value, k_samplerate_recipf);
       break;
     case k_user_osc_param_shape: {
-      osc.detune = valf * 0.0001;
-      osc2.mod_amount = valf * 0.5;
+      float detune = (osc.wave_shape == saw) ? valf * 0.0001 : 0;
+      osc.detunes[1] = detune;
+      osc.detunes[2] = detune * 1.5;
+      osc.mod_amount = valf * 0.5;
       break;
     }
     case k_user_osc_param_shiftshape: {
-      float val = param_val_to_f32(value) * 2.f;
-      osc.gain = 2.f - val;
-      osc2.gain = val;
+      int input = value / 384; 
+      osc.wave_shape = WaveShape(input);
       break;
     }
     default:
