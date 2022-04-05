@@ -20,9 +20,7 @@ In order to run user units built with SDK version 1.1-0, the following firmware 
 
 ## Compiled Oscillators
 
-The compiled oscillators are found in the oscillators folder under its respective platform name:
-- nts-1.
-- minilogue-xd.
+The compiled oscillators are found in the releases section of this repo.
 
 ## Prerequisites
 

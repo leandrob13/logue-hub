@@ -12,9 +12,8 @@ typedef enum {
 } Spread;
 
 typedef struct Oscillator {
-    float phases[5] = { 0 };
-    float gains[5]= { 1.f, 0.f, 0.f, 0.f, 0.f };
+    float phases[6] = { 0 };
+    float gains[6]= { 0.17, 0.f, 0.f, 0.f, 0.f, 0.f };
     float drive;
     Spread spread;
-    float total_gain;
 } Oscillator;
