@@ -71,30 +71,30 @@ It is composed of a main oscillator and two subharmonic oscillators. The availab
 
 ### Harmonik
 
-The Harmonik is an additive oscillator comprised of 5 sine wave oscillators, each of them has an amplitude control and are summed to get the final tones.
+The Harmonik is an additive oscillator comprised of 6 sine wave oscillators, each of them has an amplitude control and are summed to get the final tones.
 By default, each voice is spread apart by the harmonic series with the root note as the fundamental frequency. The Spread setting can change this so that we get even or odd partials in the mix. 
 For more harmonic addition, a wave folder can be controlled with the Shape knob.   
 
 #### Features
 
-- Five sine wave oscillators with amplitude control.
+- Six sine wave oscillators with amplitude control.
 - A wave folder that folds each sine wave before summing the result to the final signal.
 - Spread control for the partials so that we have harmonic, odd or even partial overtones.
-- The wave folder can be modulated with the LFO.
+- The wave folder can be modulated with the Shape LFO.
 - Total gain control with distortion possibility when all the voices gains are at max.
 
  #### Parameters
  
-| Parameter      | Range        | Description                                                            |
-| :------------: | :----------: | ---------------------------------------------------------------------: |
-| SHAPE          | 0 to 100     |Wave folder control                                                     |
-| ALT            | 0 to 100     |Gain of the final signal                                                |
-| ROOT           | 0 to 100     |The fundamental frequency amplitude controller                          |
-| P1             | 0 to 100     |The first partial frequency amplitude controller                        |
-| P2             | 0 to 100     |The second partial frequency amplitude controller                       |
-| P3             | 0 to 100     |The third partial frequency amplitude controller                        |
-| P4             | 0 to 100     |The fourth partial frequency amplitude controller                       |
-| SPRD           | 0 to 2       |The spread controller 0: harmonic, 1: odd, 2: even                      |
+| Parameter      | Range        | Description                                      |
+| :------------: | :----------: | -----------------------------------------------: |
+| SHAPE          | 0 to 100     |Wave folder control                               |
+| ALT            | 0 to 100     |Gain of the fundamental signal                    |
+| P1             | 0 to 100     |The first partial frequency amplitude controller  |
+| P2             | 0 to 100     |The second partial frequency amplitude controller |
+| P3             | 0 to 100     |The third partial frequency amplitude             |
+| P4             | 0 to 100     |The fourth partial frequency amplitude controller |
+| P5             | 0 to 100     |The fifth partial frequency amplitude controller  |
+| SPRD           | 0 to 2       |The spread controller 0: harmonic, 1: odd, 2: even|
 
 ### Kord
 
@@ -106,23 +106,23 @@ The Kord has 3 oscillators which can be used in three different arrangements: un
 
 #### Features
 
-- Three oscillators with two different waveforms: Saw and Square.
+- Three oscillators with three different waveforms: Saw, Square and Sine.
 - Four different oscillator arrangements: unison, octaves, fifths and triads.
 - Three musical scales: chromatic, mayor and minor.
 - If the scale is not chromatic, the triad arrangement will produce chord progressions that are in the given scale: Mayor (I, ii, iii, IV, V, vi, vii•), Minor (i, ii•, III, iv, v, VI, vii•). 
-- Oscillator detune for Saw and PWM for Square.
-- Blend between saw and square waveforms.
+- Select between saw, square and sine waveforms.
+- Oscillator detune for Saw, PWM for Square, Fold for Sine.
 - One Square wave suboscillator that can go one or two octaves lower than the root note.
 
 #### Parameters
 
 | Parameter      | Range        | Description                                                            |
 | :------------: | :----------: | ---------------------------------------------------------------------: |
-| SHAPE          | 0 to 100     |detune (Saw), PWM (Square) control.                                     |
-| ALT            | 0 to 100     |Blend control for waveforms.                                            |
+| SHAPE          | 0 to 100     |Detune (Saw), PWM (Square), Fold (Sine) LFO modulation amount control.  |
+| ALT            | 0 to 100     |Wave form selector: 0: Saw, 1: Square, 2: Sine.                         |
 | Voic           | 0 to 3       |The voice arrangement: 0: unison, 1: octaves, 2: fifths, 3: triads.     |
 | Root           | 0 to 12      |The root note of the scale.                                             |
 | Scal           | 0 to 2       |The musical scale: 0: chromatic, 1: mayor, 2: minor.                    |
-| Sub            | 0 to 2       |Enables the square suboscillator: 0: disabled, 1: one octave lower, 2: two octaves lower.|
-| PW             | 0 to 100     |Pulse width of the Square wave oscillators                              |
+| Sub            | 0 to 2       |Enables the suboscillator: 0: disabled, 1: 1 octave, 2: 2 octaves.      |
+| SHP            | 0 to 100     |Pulse width of the Square wave or fold amount for the Sine wave         |
 | LFO            | 30 to 100    |The rate of the LFO controlling PWM                                     |
