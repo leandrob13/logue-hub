@@ -74,16 +74,17 @@ typedef struct ScaleChords {
         },
         {   //Minor
             {0, 3, 7}, // MINOR,
-            {0, 3, 7}, // MINOR,  
+            {0, 3, 7}, // MINOR, / 
             {0, 3, 6}, // MINOR_DIM
             {0, 4, 7}, // MAYOR, 
-            {0, 4, 7}, // MAYOR, 
+            {0, 4, 7}, // MAYOR, /
             {0, 3, 7}, // MINOR, 
+            {0, 3, 7}, // MINOR, /
             {0, 3, 7}, // MINOR, 
             {0, 4, 7}, // MAYOR, 
-            {0, 4, 7}, // MAYOR, 
-            {0, 4, 7}, // MAYOR, 
-            {0, 3, 6} // MINOR_DIM
+            {0, 4, 7}, // MAYOR, /
+            {0, 3, 6}, // MINOR_DIM
+            {0, 3, 6} // MINOR_DIM /
         }
     };
 
