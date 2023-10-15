@@ -157,7 +157,7 @@ typedef struct Oscillator {
             case sine: {
                 float folded = 0.75 * (shape + (mod * mod_amount)) * fold(osc_sinf(p));
                 p = p + folded;
-                wave = osc_sinf(p);
+                wave = osc_sinf(p) * 0.8;
                 break;
             }
             default:

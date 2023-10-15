@@ -71,11 +71,11 @@ void OSC_CYCLE(
     float sig = 0.f;
     for (int i = 0; i < 3; i++) {
       if (osc.detunes[i] == 0 && osc.voice_type == unison) osc.phases[i] = osc.phases[0];
-      sig += osc.get_wave(osc.phases[i]) * 0.2;
+      sig += osc.get_wave(osc.phases[i]) * 0.1;
       osc.phases[i] += w[i];
       osc.phases[i] -= (uint32_t)osc.phases[i];      
     }
-    sig += (sub_osc.sub_octave == 0) ? 0 : sub_osc.get_wave(sub_osc.phases[0]) * 0.2;
+    sig += (sub_osc.sub_octave == 0) ? 0 : sub_osc.get_wave(sub_osc.phases[0]) * 0.1;
     sub_osc.phases[0] += sw;
     sub_osc.phases[0] -= (uint32_t)sub_osc.phases[0];
     *(y++) = f32_to_q31(sig);
