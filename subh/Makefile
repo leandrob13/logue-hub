@@ -4,12 +4,11 @@
 
 detected_OS := $(shell uname -s)
 
-ROOTDIR = ../../../..
-MAKEDIR = $(ROOTDIR)/builds/nts-1/osc/subh
+ROOTDIR = ..
+MAKEDIR = $(ROOTDIR)/builds/subh
 SRCDIR = $(ROOTDIR)/src
-NTSDIR = $(SRCDIR)/nts-1
-PROJECTDIR = $(NTSDIR)/osc
-CMSISDIR = $(SRCDIR)/ext/CMSIS
+#PROJECTDIR = $(SRCDIR)
+CMSISDIR = $(SRCDIR)/arm/CMSIS
 
 # #############################################################################
 # configure archive utility
@@ -36,6 +35,7 @@ GCC_BIN_PATH = $(ROOTDIR)/gcc_compiler/gcc-arm-none-eabi-5_4-2016q3/bin
 CC   = $(GCC_BIN_PATH)/$(GCC_TARGET)gcc
 CXXC = $(GCC_BIN_PATH)/$(GCC_TARGET)g++
 LD   = $(GCC_BIN_PATH)/$(GCC_TARGET)gcc
+#LD  = $(GCC_BIN_PATH)/$(GCC_TARGET)g++
 CP   = $(GCC_BIN_PATH)/$(GCC_TARGET)objcopy
 AS   = $(GCC_BIN_PATH)/$(GCC_TARGET)gcc -x assembler-with-cpp
 AR   = $(GCC_BIN_PATH)/$(GCC_TARGET)ar
@@ -45,7 +45,7 @@ SZ   = $(GCC_BIN_PATH)/$(GCC_TARGET)size
 HEX  = $(CP) -O ihex
 BIN  = $(CP) -O binary
 
-LDDIR = $(PROJECTDIR)/ld
+LDDIR = $(SRCDIR)/ld
 RULESPATH = $(LDDIR)
 LDSCRIPT = $(LDDIR)/userosc.ld
 DLIBS = -lm
@@ -74,11 +74,11 @@ TOPT = -mthumb -mno-thumb-interwork -DTHUMB_NO_INTERWORKING -DTHUMB_PRESENT
 # set targets and directories
 # #############################################################################
 
+BUILDDIR = $(MAKEDIR)/build
 PKGDIR = $(PROJECT)
-PKGARCH = $(PROJECT).ntkdigunit
+PKGARCH = $(BUILDDIR)/$(PROJECT).ntkdigunit
 MANIFEST = manifest.json
 PAYLOAD = payload.bin
-BUILDDIR = $(MAKEDIR)/build
 OBJDIR = $(BUILDDIR)/obj
 LSTDIR = $(BUILDDIR)/lst
 
@@ -86,7 +86,7 @@ ASMSRC = $(UASMSRC)
 
 ASMXSRC = $(UASMXSRC)
 
-CSRC = $(PROJECTDIR)/tpl/_unit.c $(UCSRC)
+CSRC = $(SRCDIR)/tpl/_unit.c $(UCSRC)
 
 CXXSRC = $(UCXXSRC)
 

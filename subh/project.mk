@@ -6,7 +6,7 @@ PROJECT = subharmonikorg
 
 UCSRC =
 
-UCXXSRC = ../../../../src/nts-1/osc/subh/subh.cpp
+UCXXSRC = ./subh.cpp
 
 UINCDIR =
 
