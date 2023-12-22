@@ -1,0 +1,19 @@
+{
+    "configurations": [
+        {
+            "name": "logue",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "intelliSenseMode": "${default}",
+            "macFrameworkPath": [
+                "gcc_compiler/gcc-arm-none-eabi-5_4-2016q3/arm-none-eabi"
+            ],
+            "configurationProvider": "ms-vscode.cmake-tools",
+            "defines": [
+                "ARM_MATH_CM4"
+            ]
+        }
+    ],
+    "version": 4
+}

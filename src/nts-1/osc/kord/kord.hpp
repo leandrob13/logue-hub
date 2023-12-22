@@ -144,7 +144,7 @@ typedef struct Oscillator {
 
     float get_wave(float phase) {
         float wave;
-        float p = (phase < 0.f) ? 1.f - phase : phase - (uint32_t)phase;
+        float p = (phase < 0.f) ? 1.f - phase : phase - (int32_t) phase ;
         switch (wave_shape) {
             case saw:
                 wave = osc_sawf(p);
