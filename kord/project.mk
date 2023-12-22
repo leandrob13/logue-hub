@@ -6,7 +6,7 @@ PROJECT = kord
 
 UCSRC =
 
-UCXXSRC = ../../../../src/nts-1/osc/kord/kord.cpp
+UCXXSRC = ./kord.cpp
 
 UINCDIR =
 
