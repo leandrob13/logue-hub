@@ -6,7 +6,7 @@ PROJECT = harmonik
 
 UCSRC =
 
-UCXXSRC = ../../../../src/nts-1/osc/harmon/harmon.cpp
+UCXXSRC = ./harmon.cpp
 
 UINCDIR =
 
