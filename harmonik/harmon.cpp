@@ -37,6 +37,9 @@ static inline int spread(int index) {
         case even:
           s = (index == 0) ? 1 : 2 * index;
           break;
+        case octaves:
+          s = 1 << index;
+          break;
     }
     return s;
 }
@@ -112,6 +115,9 @@ void OSC_PARAM(uint16_t index, uint16_t value) {
           break;
         case 2:
           osc.spread = even;
+          break;
+        case 3:
+          osc.spread = octaves;
           break;
       }
       break;

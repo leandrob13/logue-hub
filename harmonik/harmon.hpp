@@ -8,7 +8,8 @@
 typedef enum {
     harmonic = 0,
     odd = 1,
-    even = 2
+    even = 2,
+    octaves = 3
 } Spread;
 
 typedef struct Oscillator {
