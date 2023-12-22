@@ -8,7 +8,7 @@ ROOTDIR = ..
 MAKEDIR = $(ROOTDIR)/builds/harmonik
 SRCDIR = $(ROOTDIR)/src
 #PROJECTDIR = $(SRCDIR)
-CMSISDIR = $(SRCDIR)/ext/CMSIS
+CMSISDIR = $(SRCDIR)/arm/CMSIS
 
 # #############################################################################
 # configure archive utility

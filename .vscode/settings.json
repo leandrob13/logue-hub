@@ -38,6 +38,7 @@
         "int_math.h": "c",
         "_default_types.h": "c",
         "features.h": "c",
-        "_newlib_version.h": "c"
+        "_newlib_version.h": "c",
+        "arm_math.h": "c"
     }
 }
