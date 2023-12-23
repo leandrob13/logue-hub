@@ -39,5 +39,5 @@ make -C {application dir}
 ## Custom Oscillator Reference:
 
 - [Harmonik](harmonik).
-- Kord.
-- Subharmonikorg.
+- [Kord](kord).
+- [Subharmonikorg](subh).
