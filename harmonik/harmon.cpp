@@ -12,38 +12,6 @@ void OSC_INIT(uint32_t platform, uint32_t api) {
   osc.spread = harmonic;
 }
 
-static inline float fold(float x) {
-    float fold;
-    const float bias = (x < 0) ? -1.f : 1.f;
-    int phase = int((x + bias) / 2.f);
-    bool isEven = !(phase & 1);
-    if (isEven) {
-        fold = x - 2.f * phase;
-    } else {
-        fold = -x + 2.f * phase;
-    }
-    return fold;
-}
-
-static inline int spread(int index) {
-    int s;
-    switch (osc.spread) {
-        case harmonic:
-          s = index + 1;
-          break;
-        case odd:
-          s = 2 * (index + 1) - 1;
-          break;
-        case even:
-          s = (index == 0) ? 1 : 2 * index;
-          break;
-        case octaves:
-          s = 1 << index;
-          break;
-    }
-    return s;
-}
-
 void OSC_CYCLE(
         const user_osc_param_t * const params,
         int32_t *yn,
@@ -59,10 +27,10 @@ void OSC_CYCLE(
     float sig = 0.f;
     for (int i = 0; i < 6; i++) {
         float p = osc.phases[i];
-        int div = spread(i);
+        int div = osc.partial(i);
         float w = w0 * div;
         p = (p < 0.f) ? 1.f - p : p - (uint32_t)p;
-        float folded = 0.75f * (osc.drive + lfo) * fold(osc_sinf(p));
+        float folded = 0.75f * osc.fold(osc_sinf(p), lfo);
         p = p + folded;
         sig += osc_sinf(p) * osc.gains[i];
         osc.phases[i] += w;
@@ -82,8 +50,8 @@ void OSC_NOTEOFF(const user_osc_param_t * const params) {
 }
 
 float scale_input(int value) {
-  float ratio = (float)value / 100.f;
-  return ratio / 6.f;
+  float ratio = (float)value / 500.f;
+  return ratio;
 }
 
 void OSC_PARAM(uint16_t index, uint16_t value) {
@@ -106,26 +74,13 @@ void OSC_PARAM(uint16_t index, uint16_t value) {
       osc.gains[5] = scale_input(value);
       break;
     case k_user_osc_param_id6:
-      switch (value) {
-        case 0:
-          osc.spread = harmonic;
-          break;
-        case 1:
-          osc.spread = odd;
-          break;
-        case 2:
-          osc.spread = even;
-          break;
-        case 3:
-          osc.spread = octaves;
-          break;
-      }
+      osc.spread = static_cast<Spread>(value);
       break;
     case k_user_osc_param_shape:
-      osc.drive = valf;
+      osc.drive = value / 700.0f;
       break;
     case k_user_osc_param_shiftshape:
-      osc.gains[0] = valf / 6.f;
+      osc.offset = value / 700.0f;
       break;
     default:
       break;
